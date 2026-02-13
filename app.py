@@ -5,7 +5,6 @@ import io
 
 st.title("QR Code Generator")
 
-# This replaces input()
 data = st.text_input("Enter a website or URL")
 
 if st.button("Generate QR Code") and data.strip():
@@ -19,21 +18,18 @@ if st.button("Generate QR Code") and data.strip():
     qr.add_data(data)
     qr.make(fit=True)
 
-    img = qr.make_image(
-        fill_color='red',
-        back_color='white'
-    )
+    # Convert to a standard PIL image so Streamlit can display it
+    img = qr.make_image(fill_color='red', back_color='white').convert("RGB")
 
-    # Show the QR code on the webpage
     st.image(img)
 
-    # Convert to PNG so user can download
     buffer = io.BytesIO()
     img.save(buffer, format="PNG")
+    buffer.seek(0)
 
     st.download_button(
         label="Download QR Code",
-        data=buffer.getvalue(),
+        data=buffer,
         file_name="MyQRCode.png",
         mime="image/png"
     )
